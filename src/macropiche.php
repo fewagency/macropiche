@@ -21,17 +21,8 @@ if (!function_exists('macropiche')) {
         $detected_language = 'html'; // Set language to HTML as default
         $file_contents = ''; // Set empty file contents as default
         $initial_ob_level = ob_get_level(); // Save the output buffer level for cleaning up afterwards
+
         try {
-            $file_contents = @file_get_contents($path, FILE_USE_INCLUDE_PATH);
-            if ($file_contents === false) {
-                $error = error_get_last();
-                throw new Exception($error['message']);
-            }
-
-            if (substr($path, -4) == '.php') {
-                $detected_language = 'php';
-            }
-
             // Declare the standard parser for PHP and HTML template files
             $parser = function ($path, $context) {
                 if (!is_array($context)) {
@@ -44,6 +35,35 @@ if (!function_exists('macropiche')) {
 
                 return $parsed_content;
             };
+
+            // Attempt to use a Blade parser if available
+            if (class_exists('Illuminate\View\Factory')) {
+                if (function_exists('view')) {
+                    $blade = view();
+                } elseif (function_exists('macropiche_blade_view')) {
+                    $blade = macropiche_blade_view();
+                }
+                if (!empty($blade) and $blade instanceof \Illuminate\View\Factory) {
+                    $path = $blade->find($path);
+                    $parser = function ($path, $context) use ($blade) {
+                        return $blade->make($path, $context);
+                    };
+                }
+            }
+
+            if (substr($path, -4) == '.php') {
+                $detected_language = 'php';
+            }
+
+            if (substr($path, -10) == '.blade.php') {
+                $detected_language = 'blade';
+            }
+
+            $file_contents = @file_get_contents($path, FILE_USE_INCLUDE_PATH);
+            if ($file_contents === false) {
+                $error = error_get_last();
+                throw new Exception($error['message']);
+            }
 
             // Render the output using the parser
             $output = call_user_func_array($parser, compact('path', 'context'));
