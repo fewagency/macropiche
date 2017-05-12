@@ -70,7 +70,7 @@ Why not use
 Generated Prism files can also be found among the [assets of this package](/assets) for quick use.
 
 ## Usage with Blade and Twig templates
-`macropiche` currently supports HTML and PHP template files.
+`macropiche` currently supports `HTML` and `PHP` template files.
 We have support for Blade first in the feature pipeline, then Twig too!
 
 ## `<samp>`!
