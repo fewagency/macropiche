@@ -45,10 +45,10 @@ if (!function_exists('macropiche')) {
                     $blade = macropiche_blade_view();
                 }
                 if (!empty($blade) and $blade instanceof Illuminate\Contracts\View\Factory) {
-                    if (method_exists($blade, 'getFinder')) {
+                    if (is_callable([$blade, 'getFinder']) and $blade->getFinder() instanceof \Illuminate\View\ViewFinderInterface) {
                         $parser_path = $blade->getFinder()->find($path);
                     } else {
-                        $parser_path = preg_replace('/(.html|.blade.php|.php)$/', '', $path);
+                        $parser_path = preg_replace('/\.(html|blade\.php|php)$/', '', $path);
                     }
                     $parser = function ($path, $context) use ($blade) {
                         return $blade->make($path, $context)->render();
