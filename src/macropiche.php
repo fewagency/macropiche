@@ -46,14 +46,11 @@ if (!function_exists('macropiche')) {
                 }
 
                 if (!empty($blade)) {
-                    if (is_callable([$blade, 'getFinder',]) and
-                        $blade->getFinder() instanceof \Illuminate\View\ViewFinderInterface
-                    ) {
-                        $parser_path = $blade->getFinder()->find($path);
-                    } else {
-                        $parser_path = preg_replace('/\.(html|blade\.php|php)$/', '', $path);
-                    }
+                    $parser_path = preg_replace('/\.(html|blade\.php|php)$/', '', $path);
                     $parser = function ($path, $context) use ($blade) {
+                        if(is_null($context)) {
+                            $context = [];
+                        }
                         return $blade->make($path, $context)->render();
                     };
                 }
