@@ -39,13 +39,16 @@ if (!function_exists('macropiche')) {
 
             // Attempt to use a Blade parser if available
             if (interface_exists('Illuminate\Contracts\View\Factory')) {
-                if (function_exists('view')) {
+                if (function_exists('view') and view() instanceof Illuminate\Contracts\View\Factory) {
                     $blade = view();
                 } elseif (function_exists('macropiche_blade_view')) {
                     $blade = macropiche_blade_view();
                 }
-                if (!empty($blade) and $blade instanceof Illuminate\Contracts\View\Factory) {
-                    if (is_callable([$blade, 'getFinder']) and $blade->getFinder() instanceof \Illuminate\View\ViewFinderInterface) {
+
+                if (!empty($blade)) {
+                    if (is_callable([$blade, 'getFinder',]) and
+                        $blade->getFinder() instanceof \Illuminate\View\ViewFinderInterface
+                    ) {
                         $parser_path = $blade->getFinder()->find($path);
                     } else {
                         $parser_path = preg_replace('/\.(html|blade\.php|php)$/', '', $path);
