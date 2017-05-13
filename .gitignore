@@ -1,3 +1,5 @@
+.idea
 /composer.lock
 /vendor
 /examples/testoutput
+examples/support/blade-cache

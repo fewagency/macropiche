@@ -16,6 +16,7 @@ if (!function_exists('macropiche')) {
     function macropiche($path, $context = null)
     {
         $base_css_class = __FUNCTION__;
+        $parser_path = $path;
 
         // Parse the template file...
         $detected_language = 'html'; // Set language to HTML as default
@@ -44,9 +45,13 @@ if (!function_exists('macropiche')) {
                     $blade = macropiche_blade_view();
                 }
                 if (!empty($blade) and $blade instanceof Illuminate\Contracts\View\Factory) {
-                    $path = $blade->getFinder()->find($path);
+                    if (method_exists($blade, 'getFinder')) {
+                        $parser_path = $blade->getFinder()->find($path);
+                    } else {
+                        $parser_path = preg_replace('/(.html|.blade.php|.php)$/', '', $path);
+                    }
                     $parser = function ($path, $context) use ($blade) {
-                        return $blade->make($path, $context);
+                        return $blade->make($path, $context)->render();
                     };
                 }
             }
@@ -66,7 +71,7 @@ if (!function_exists('macropiche')) {
             }
 
             // Render the output using the parser
-            $output = call_user_func_array($parser, compact('path', 'context'));
+            $output = call_user_func_array($parser, compact('parser_path', 'context'));
         } catch (Exception $e) {
             // Any file- or parsing-related failures will be echoed in the output
             $output = '<samp class="macropiche__error" title="Error message">' . $e->getMessage() . '</samp>';
