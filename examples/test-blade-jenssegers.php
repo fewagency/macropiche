@@ -5,7 +5,8 @@ function macropiche_blade_view()
         [realpath(__DIR__)],
         realpath(__DIR__ . '/blade-cache')
     );
-    $blade->getFinder()->addExtension('html');
+    $blade->addExtension('html', 'blade');
+
     return $blade;
 }
 
