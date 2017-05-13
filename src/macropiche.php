@@ -9,12 +9,13 @@ if (!function_exists('macropiche')) {
      * - the processed file output as code (unless equal to original file content)
      * - the processed file output as HTML
      *
-     * @param $path    string Relative or absolute path to template/view file
+     * @param $file    string Relative or absolute path to template/view file
      * @param $context array|mixed Optional data for the template parser
      * @return string HTML
      */
-    function macropiche($path, $context = null)
+    function macropiche($file, $context = null)
     {
+        $path = $file;
         $base_css_class = __FUNCTION__;
 
         // Parse the template file...
@@ -46,9 +47,9 @@ if (!function_exists('macropiche')) {
 
                 if (!empty($blade)) {
                     $parser = function ($path, $context) use ($blade) {
-                        //$path = preg_replace('/\.(html|blade\.php|php)$/', '', $path);
                         return $blade->file($path, $context ?: []);
                     };
+                    //TODO: try to set $path from $file using a ViewFinderInterface
                 }
             }
 
@@ -57,7 +58,7 @@ if (!function_exists('macropiche')) {
             }
 
             if (substr($path, -10) == '.blade.php') {
-                $detected_language = 'blade';
+                $detected_language = 'html'; // Until there is a good syntax highlighter for blade
             }
 
             $file_contents = @file_get_contents($path, FILE_USE_INCLUDE_PATH);
