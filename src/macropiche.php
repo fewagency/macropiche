@@ -37,14 +37,14 @@ if (!function_exists('macropiche')) {
             };
 
             // Attempt to use a Blade parser if available
-            if (class_exists('Illuminate\View\Factory')) {
+            if (interface_exists('Illuminate\Contracts\View\Factory')) {
                 if (function_exists('view')) {
                     $blade = view();
                 } elseif (function_exists('macropiche_blade_view')) {
                     $blade = macropiche_blade_view();
                 }
-                if (!empty($blade) and $blade instanceof \Illuminate\View\Factory) {
-                    $path = $blade->find($path);
+                if (!empty($blade) and $blade instanceof Illuminate\Contracts\View\Factory) {
+                    $path = $blade->getFinder()->find($path);
                     $parser = function ($path, $context) use ($blade) {
                         return $blade->make($path, $context);
                     };

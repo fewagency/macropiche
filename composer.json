@@ -24,7 +24,7 @@
     "php": ">=5.4.0"
   },
   "require-dev": {
-    "illuminate/view": "^5.2"
+    "duncan3dc/blade": "^3.4"
   },
   "autoload": {
     "files": [
