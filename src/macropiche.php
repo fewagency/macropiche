@@ -55,8 +55,8 @@ if (!function_exists('macropiche')) {
                     ) {
                         try {
                             $path = $blade->getFinder()->find($file);
-                        } catch(Exception $exception) {
-
+                        } catch (Exception $exception) {
+                            // Couldn't find the template - just keep the original path
                         }
                     }
                 }
@@ -99,7 +99,7 @@ if (!function_exists('macropiche')) {
         // Build the HTML...
 
         // The file path
-        $html_parts[] = '<a href="#' . $html_id . '" class="' . htmlentities($base_css_class . '__path') . '" title="Link to this section"><code>' . htmlentities($path) . '</code></a>';
+        $html_parts[] = '<a href="#' . $html_id . '" class="' . htmlentities($base_css_class . '__path') . '" title="Link to this section"><code>' . htmlentities($file) . '</code></a>';
         if ($file_contents) {
             // Anchor for source output (The tag is empty because only relevant with special styling anyway)
             $html_parts[] = '<a href="#' . $html_code_id . '" class="' . htmlentities($base_css_class . '__source-anchor') . '" id="' . $html_code_id . '" title="Source"></a>';
