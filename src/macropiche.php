@@ -59,7 +59,7 @@ if (!function_exists('macropiche')) {
             }
 
             if (substr($path, -10) == '.blade.php') {
-                $detected_language = 'html'; // Until there is a good syntax highlighter for blade
+                $detected_language = 'php'; // Until there is a good syntax highlighter for blade
             }
 
             $file_contents = @file_get_contents($path, FILE_USE_INCLUDE_PATH);
