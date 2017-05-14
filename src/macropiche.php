@@ -25,13 +25,13 @@ if (!function_exists('macropiche')) {
 
         try {
             // Declare the standard parser for PHP and HTML template files
-            $parser = function ($path, $context) {
+            $parser = function ($file, $context) {
                 if (!is_array($context)) {
                     $context = (array)$context;
                 }
                 extract($context);
                 ob_start();
-                include($path);
+                include($file);
                 $parsed_content = ob_get_clean();
 
                 return $parsed_content;
@@ -46,8 +46,9 @@ if (!function_exists('macropiche')) {
                 }
 
                 if (!empty($blade)) {
-                    $parser = function ($path, $context) use ($blade) {
-                        return $blade->file($path, $context ?: []);
+                    //TODO: try to check if blade instance can handle .php and .html - if not only set blade parser if $file ends with .blade.php
+                    $parser = function ($file, $context) use ($blade) {
+                        return $blade->file($file, $context ?: []);
                     };
                     //TODO: try to set $path from $file using a ViewFinderInterface
                 }
