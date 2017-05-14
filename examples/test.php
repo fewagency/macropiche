@@ -34,9 +34,9 @@ require __DIR__ . '/../vendor/autoload.php';
 
 <h2>Blade template</h2>
 <p>
-  A reference to a blade template should be rendered as the file's blade content, the generated HTML, and the HTML put into the page.
+  If a blade renderer is available, a reference to a blade template should be rendered as the file's blade content, the generated HTML, and the HTML put into the page.
 </p>
-<?= macropiche('patterns.list', ['title' => 'List']) ?>
+<?= macropiche('patterns/list.blade.php', ['title' => 'List']) ?>
 
 <h2>Missing template</h2>
 <p>A missing template should render an error message.</p>

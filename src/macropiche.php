@@ -46,18 +46,17 @@ if (!function_exists('macropiche')) {
                 }
 
                 if (!empty($blade)) {
-                    //TODO: try to check if blade instance can handle .php and .html - if not only set blade parser if $file ends with .blade.php
+                    //TODO: try to check if blade instance can handle .php and .html - if not, only set blade parser if $file ends with .blade.php
                     $parser = function ($path, $context) use ($blade) {
                         return $blade->file($path, $context ?: []);
                     };
+
+                    // Transform a blade view reference to a full path if possible
                     if (is_callable([$blade, 'getFinder',]) and
-                        $blade->getFinder() instanceof \Illuminate\View\ViewFinderInterface
+                        $blade->getFinder() instanceof \Illuminate\View\ViewFinderInterface and
+                        $blade->exists($file)
                     ) {
-                        try {
-                            $path = $blade->getFinder()->find($file);
-                        } catch (Exception $exception) {
-                            // Couldn't find the template - just keep the original path
-                        }
+                        $path = $blade->getFinder()->find($file);
                     }
                 }
             }
@@ -78,7 +77,8 @@ if (!function_exists('macropiche')) {
 
             // Render the output using the parser
             $output = call_user_func_array($parser, compact('path', 'context'));
-        } catch (Exception $e) {
+        } catch
+        (Exception $e) {
             // Any file- or parsing-related failures will be echoed in the output
             $output = '<samp class="macropiche__error" title="Error message">' . $e->getMessage() . '</samp>';
         }
