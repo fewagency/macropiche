@@ -50,7 +50,15 @@ if (!function_exists('macropiche')) {
                     $parser = function ($path, $context) use ($blade) {
                         return $blade->file($path, $context ?: []);
                     };
-                    //TODO: try to set $path from $file using a ViewFinderInterface
+                    if (is_callable([$blade, 'getFinder',]) and
+                        $blade->getFinder() instanceof \Illuminate\View\ViewFinderInterface
+                    ) {
+                        try {
+                            $path = $blade->getFinder()->find($file);
+                        } catch(Exception $exception) {
+
+                        }
+                    }
                 }
             }
 
