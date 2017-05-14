@@ -46,17 +46,28 @@ if (!function_exists('macropiche')) {
                 }
 
                 if (!empty($blade)) {
-                    //TODO: try to check if blade instance can handle .php and .html - if not, only set blade parser if $file ends with .blade.php
-                    $parser = function ($path, $context) use ($blade) {
-                        return $blade->file($path, $context ?: []);
-                    };
-
                     // Transform a blade view reference to a full path if possible
                     if (is_callable([$blade, 'getFinder',]) and
                         $blade->getFinder() instanceof \Illuminate\View\ViewFinderInterface and
                         $blade->exists($file)
                     ) {
                         $path = $blade->getFinder()->find($file);
+                    }
+
+                    // Try to verify if blade can handle the path
+                    if (is_callable([$blade, 'getEngineFromPath'])) {
+                        try {
+                            $blade->getEngineFromPath($path);
+                            $blade_can_handle_path = true;
+                        } catch (Exception $e) {
+                            $blade_can_handle_path = false;
+                        }
+                    }
+
+                    if (!empty($blade_can_handle_path) or substr($path, -10) == '.blade.php') {
+                        $parser = function ($path, $context) use ($blade) {
+                            return $blade->file($path, $context ?: []);
+                        };
                     }
                 }
             }
